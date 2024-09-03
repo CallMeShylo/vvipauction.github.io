@@ -122,12 +122,12 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="_replyto" required>
             
-            <label for="bid">Bid Amount (Unlocked):</label>
+            <label for="bid">Bid Amount (Best Bid Post-Auction For Runners Up):</label>
             <input type="number" id="bid" name="bid" required>
             
             <div id="error-message" class="error"></div>
             
-            <button type="submit">Submit Your Bid</button>
+            <button type="submit">Submit Your Best Bid (For Phase Two Interview)</button>
         </form>
         <div class="highest-bid">
             <h2>Current Highest Bid:</h2>
@@ -146,7 +146,7 @@
         <p>&copy; 2024 #TheOrder 🗝. All rights reserved.</p>
     </footer>
     <script>
-        const minimumBid = 7777; // minimum bid amount here calculated #90888420094890 (Verified)
+        const minimumBid = 9630; // minimum bid amount here calculated #90888420094890 (Verified)
 
         function validateForm() {
             const bidAmount = parseFloat(document.getElementById('bid').value);
