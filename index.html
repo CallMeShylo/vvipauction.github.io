@@ -41,6 +41,7 @@
             position: absolute;
             right: 10px;
             top: 10px;
+            transition: all 0.3s ease;
         }
         .toggle-light-mode:active {
             background-color: #444;
@@ -53,62 +54,99 @@
             padding: 2em;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 1em;
+            margin: 2em;
+            max-width: 600px;
+            width: 90%;
             transition: background-color 0.3s, color 0.3s;
         }
         form {
             display: flex;
             flex-direction: column;
+            gap: 1em;
         }
         label {
-            margin-top: 1em;
+            font-weight: bold;
         }
         input, textarea {
-            padding: 0.5em;
-            margin-top: 0.5em;
-            font-size: 1em;
+            padding: 0.8em;
+            border-radius: 4px;
+            border: 1px solid #666;
+            background-color: #555;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4c96af;
+            box-shadow: 0 0 5px rgba(76, 150, 175, 0.5);
         }
         button {
             margin-top: 1em;
-            padding: 0.5em;
+            padding: 0.8em;
             background-color: #4c96af;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #6045a0;
         }
         .highest-bid {
             margin-top: 2em;
-            padding: 1em;
+            padding: 1.5em;
             background-color: #555;
             border-left: 5px solid #8345a0;
+            border-radius: 4px;
         }
         .error {
-            color: red;
+            color: #ff6b6b;
             margin-top: 0.5em;
+            font-size: 0.9em;
         }
         .countdown {
             font-size: 1.5em;
             margin-top: 1em;
-            color: #FF0000;
+            color: #ff6b6b;
+            text-align: center;
         }
-        .light-mode {
+        .vvip-details-link {
+            margin: 1em 0;
+        }
+        .vvip-details-link a {
+            color: #4c96af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .vvip-details-link a:hover {
+            color: #6045a0;
+        }
+        /* Light mode styles */
+        body.light-mode {
             background-color: #f4f4f4;
-            color: #000;
+            color: #333;
         }
-        .light-mode .container {
+        body.light-mode .container {
             background-color: white;
-            color: black;
+            color: #333;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
-        .light-mode .highest-bid {
-            background-color: #e7f4e4;
-            color: black;
+        body.light-mode input {
+            background-color: #fff;
+            color: #333;
+            border-color: #ddd;
+        }
+        body.light-mode .highest-bid {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        body.light-mode .toggle-light-mode {
+            background: #4c96af;
         }
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <header>
         <h1>VVIP Auction 2024</h1>
         <button class="toggle-light-mode" onclick="toggleLightMode()">Toggle Light Mode</button>
@@ -122,8 +160,8 @@
             <label for="email">Email:</label>
             <input type="email" id="email" name="_replyto" required>
             
-            <label for="bid">Bid Amount:</label>
-            <input type="number" id="bid" name="bid" required>
+            <label for="bid">Bid Amount (£):</label>
+            <input type="number" id="bid" name="bid" min="7070" step="1" required>
             
             <div id="error-message" class="error"></div>
             
@@ -145,14 +183,14 @@
         <p>&copy; 2024 #TheOrder 🗝. All rights reserved.</p>
     </footer>
     <script>
-        const minimumBid = ; // Set your minimum bid amount here
+        const minimumBid = 7070;
 
         function validateForm() {
             const bidAmount = parseFloat(document.getElementById('bid').value);
             const errorMessage = document.getElementById('error-message');
             
             if (isNaN(bidAmount) || bidAmount < minimumBid) {
-                errorMessage.textContent = `Bid amount must be at least $${minimumBid}.`;
+                errorMessage.textContent = `Bid amount must be at least £${minimumBid}.`;
                 return false;
             }
             
@@ -160,29 +198,31 @@
             return true;
         }
 
-        // Countdown Timer
-        const auctionEndTime = new Date("Dec 26, 2024 23:59:59").getTime(); // Set your auction end time here
+        const auctionEndTime = new Date("Dec 26, 2024 23:59:59").getTime();
 
         function updateCountdown() {
             const now = new Date().getTime();
             const timeLeft = auctionEndTime - now;
+
+            if (timeLeft < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("time-left").textContent = "Auction Ended";
+                document.getElementById("bid-form").style.display = "none";
+                return;
+            }
 
             const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
             const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            document.getElementById("time-left").textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-            if (timeLeft < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById("time-left").textContent = "Auction Ended";
-            }
+            document.getElementById("time-left").textContent = 
+                `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
 
         const countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call to avoid delay
 
-        // Light Mode Toggle
         function toggleLightMode() {
             document.body.classList.toggle('light-mode');
         }
