@@ -29,7 +29,7 @@
             align-items: center;
             position: relative;
         }
-     .toggle-light-mode {
+        .toggle-light-mode {
             background: #555;
             border: none;
             color: white;
@@ -89,7 +89,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 1.2em; /* Add this line to increase the font size */
+            font-size: 1.2em;
             transition: background-color 0.3s;
         }
         button:hover {
@@ -107,11 +107,23 @@
             margin-top: 0.5em;
             font-size: 0.9em;
         }
+        .success {
+            color: #4caf50;
+            margin-top: 1em;
+            font-size: 1em;
+            text-align: center;
+        }
         .countdown {
             font-size: 1.5em;
             margin-top: 1em;
             color: #ff6b6b;
             text-align: center;
+        }
+        .auction-ended {
+            text-align: center;
+            font-size: 1.5em;
+            color: #ff6b6b;
+            margin-top: 1em;
         }
         .vvip-details-link {
             margin: 1em 0;
@@ -169,6 +181,7 @@
             
             <button type="submit">Submit Your Bid</button>
         </form>
+        <div id="success-message" class="success" style="display:none;">Thank you for your bid! We will notify you if you’re the highest bidder.</div>
         <div class="highest-bid">
             <h2>Starting Bid:</h2>
             <p id="highest-bid-amount">£<span id="bid-amount">6969</span></p>
@@ -176,6 +189,9 @@
         </div>
         <div class="countdown" id="countdown">
             Time Left: <span id="time-left"></span>
+        </div>
+        <div class="auction-ended" id="auction-ended" style="display:none;">
+            Auction has ended. Thank you for participating!
         </div>
     </div>
     <div class="vvip-details-link">
@@ -189,14 +205,22 @@
 
         function validateForm() {
             const bidAmount = parseFloat(document.getElementById('bid').value);
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
             const errorMessage = document.getElementById('error-message');
             
+            if (!name || !email) {
+                errorMessage.textContent = 'Please fill out all fields.';
+                return false;
+            }
+
             if (isNaN(bidAmount) || bidAmount < minimumBid) {
                 errorMessage.textContent = `Bid amount must be at least £${minimumBid}.`;
                 return false;
             }
             
             errorMessage.textContent = '';
+            document.getElementById('success-message').style.display = 'block';
             return true;
         }
 
@@ -210,6 +234,7 @@
                 clearInterval(countdownInterval);
                 document.getElementById("time-left").textContent = "Auction Ended";
                 document.getElementById("bid-form").style.display = "none";
+                document.getElementById("auction-ended").style.display = "block";
                 return;
             }
 
