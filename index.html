@@ -5,65 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VVIP Auction | #TheOrder 🗝</title>
     <style>
-        /* [Previous styles remain the same until header] */
-        header {
-            background-color: #4c96af;
-            color: white;
-            padding: 1.5em;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        /* Just replace/update the header and toggle-light-mode CSS in both pages */
+header {
+    background-color: #4c96af;
+    color: white;
+    padding: 1.5em;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
 
-        header h1 {
-            margin: 0 auto;
-            padding: 0 60px;
-        }
+header h1 {
+    margin: 0 auto;
+    padding: 0 60px;
+}
 
-        .toggle-light-mode {
-            background: #555;
-            border: none;
-            color: white;
-            font-size: 0.9em;
-            cursor: pointer;
-            padding: 0.7em 1.2em;
-            border-radius: 5px;
-            box-shadow: 0 4px #999;
-            position: absolute;
-            right: 20px;
-            transition: all 0.3s ease;
-        }
+.toggle-light-mode {
+    background: #555;
+    border: none;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    box-shadow: 0 4px #999;
+    position: absolute;
+    right: 10px;
+}
 
-        /* [All other previous styles remain the same] */
+/* Add this media query for mobile */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1em;
+        gap: 1em;
+    }
 
-        /* Mobile-specific styles */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                padding: 1em;
-                gap: 1em;
-            }
+    header h1 {
+        font-size: 1.5em;
+        padding: 0;
+        margin: 0;
+    }
 
-            header h1 {
-                font-size: 1.5em;
-                padding: 0;
-                text-align: center;
-                width: 100%;
-            }
-
-            .toggle-light-mode {
-                position: static;
-                font-size: 0.8em;
-                padding: 0.5em 1em;
-            }
-
-            .container {
-                padding: 1.5em;
-                margin: 1em;
-            }
-        }
+    .toggle-light-mode {
+        position: static;
+    }
+}
     </style>
 </head>
 <body>
