@@ -44,11 +44,6 @@
             transform: translateY(-50%);
             transition: all 0.3s ease;
         }
-        .toggle-light-mode:active {
-            background-color: #444;
-            box-shadow: 0 2px #666;
-            transform: translateY(2px);
-        }
         .container {
             background-color: #444;
             color: #ccc;
@@ -95,46 +90,31 @@
         button:hover {
             background-color: #6045a0;
         }
-        .highest-bid {
-            margin-top: 2em;
-            padding: 1.5em;
-            background-color: #555;
-            border-left: 5px solid #8345a0;
-            border-radius: 4px;
-        }
-        .error {
-            color: #ff6b6b;
-            margin-top: 0.5em;
-            font-size: 0.9em;
-        }
-        .success {
-            color: #4caf50;
-            margin-top: 1em;
-            font-size: 1em;
-            text-align: center;
-        }
         .countdown {
             font-size: 1.5em;
             margin-top: 1em;
             color: #ff6b6b;
             text-align: center;
         }
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #555;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1em;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4c96af;
+            width: 0%; /* Initial value, updated via JavaScript */
+            transition: width 0.5s ease;
+        }
         .auction-ended {
             text-align: center;
             font-size: 1.5em;
             color: #ff6b6b;
             margin-top: 1em;
-        }
-        .vvip-details-link {
-            margin: 1em 0;
-        }
-        .vvip-details-link a {
-            color: #4c96af;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .vvip-details-link a:hover {
-            color: #6045a0;
         }
         /* Light mode styles */
         body.light-mode {
@@ -151,12 +131,11 @@
             color: #333;
             border-color: #ddd;
         }
-        body.light-mode .highest-bid {
-            background-color: #f8f9fa;
-            color: #333;
+        body.light-mode .progress-container {
+            background-color: #ddd;
         }
-        body.light-mode .toggle-light-mode {
-            background: #4c96af;
+        body.light-mode .progress-bar {
+            background-color: #4c96af;
         }
     </style>
 </head>
@@ -167,64 +146,38 @@
     </header>
     <div class="container">
         <h2>Submit Best Bid</h2>
-        <form id="bid-form" action="https://formspree.io/f/xpwawlov" method="POST" onsubmit="return validateForm()">
+        <form id="bid-form">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
             
             <label for="email">Email:</label>
-            <input type="email" id="email" name="_replyto" required>
+            <input type="email" id="email" name="email" required>
             
             <label for="bid">Bid Amount (£):</label>
-            <input type="number" id="bid" name="bid" min="7070" step="1" required>
+            <input type="number" id="bid" name="bid" min="7070" required>
             
-            <div id="error-message" class="error"></div>
+            <div id="error-message" style="color: #ff6b6b; font-size: 0.9em;"></div>
             
-            <button type="submit">Submit Your Bid</button>
+            <button type="submit" onclick="handleBidSubmission(event)">Submit Your Bid</button>
         </form>
-        <div id="success-message" class="success" style="display:none;">Thank you for your bid! We will notify you if you’re the highest bidder.</div>
-        <div class="highest-bid">
-            <h2>Starting Bid:</h2>
-            <p id="highest-bid-amount">£<span id="bid-amount">6969</span></p>
-            <p id="highest-bidder">Status: <span id="bidder-name">no bids</span></p>
-        </div>
+        <div id="success-message" style="color: #4caf50; font-size: 1em; margin-top: 1em; display: none;">Success. We will notify U if you win VVIP or awarded runners-up. Until then, happy bidding!</div>
         <div class="countdown" id="countdown">
             Time Left: <span id="time-left"></span>
         </div>
-        <div class="auction-ended" id="auction-ended" style="display:none;">
-            Auction has ended. Thank you for participating!
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
-    </div>
-    <div class="vvip-details-link">
-        <a href="https://callmeshylo.github.io/VVIP/" target="_blank">VVIP Details</a>
+        <div class="auction-ended" id="auction-ended" style="display:none;">
+            VVIP has ended. Thank U for participating 👁
+        </div>
     </div>
     <footer>
         <p>&copy; 2024 #TheOrder 🗝. All rights reserved.</p>
     </footer>
     <script>
-        const minimumBid = 7070;
-
-        function validateForm() {
-            const bidAmount = parseFloat(document.getElementById('bid').value);
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const errorMessage = document.getElementById('error-message');
-            
-            if (!name || !email) {
-                errorMessage.textContent = 'Please fill out all fields.';
-                return false;
-            }
-
-            if (isNaN(bidAmount) || bidAmount < minimumBid) {
-                errorMessage.textContent = `Bid amount must be at least £${minimumBid}.`;
-                return false;
-            }
-            
-            errorMessage.textContent = '';
-            document.getElementById('success-message').style.display = 'block';
-            return true;
-        }
-
         const auctionEndTime = new Date("Dec 27, 2024 23:59:59").getTime();
+        const auctionStartTime = new Date("Dec 24, 2024 15:00:01").getTime();
+        const totalAuctionDuration = auctionEndTime - auctionStartTime;
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -235,6 +188,7 @@
                 document.getElementById("time-left").textContent = "Auction Ended";
                 document.getElementById("bid-form").style.display = "none";
                 document.getElementById("auction-ended").style.display = "block";
+                document.getElementById("progress-bar").style.width = "100%";
                 return;
             }
 
@@ -245,10 +199,31 @@
 
             document.getElementById("time-left").textContent = 
                 `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            const timeElapsed = now - auctionStartTime;
+            const progressPercentage = Math.min((timeElapsed / totalAuctionDuration) * 100, 100);
+            document.getElementById("progress-bar").style.width = `${progressPercentage}%`;
         }
 
         const countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown(); // Initial call to avoid delay
+        updateCountdown();
+
+        function handleBidSubmission(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const bid = parseFloat(document.getElementById('bid').value);
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+
+            if (!name || !email || isNaN(bid) || bid < 7070) {
+                errorMessage.textContent = "Please fill out all fields and ensure bid is at least £7070.";
+                successMessage.style.display = "none";
+            } else {
+                errorMessage.textContent = "";
+                successMessage.style.display = "block";
+            }
+        }
 
         function toggleLightMode() {
             document.body.classList.toggle('light-mode');
