@@ -236,15 +236,13 @@
             return true;
         }
         
-const auctionEndTime = new Date("Dec 28, 2024 00:11:11 GMT").getTime();
-const auctionStartTime = new Date("Dec 24, 2024 14:30:00").getTime();
-const totalAuctionDuration = auctionEndTime - auctionStartTime;
+// Set the auction end time to 28th December 2024, 00:11 GMT
+const auctionEndTime = new Date("Dec 28, 2024 00:11:00 GMT").getTime();
 
 function updateCountdown() {
+    // Get the current time in GMT
     const now = new Date().getTime();
-    // Convert current time to GMT
-    const nowGMT = now + (new Date().getTimezoneOffset() * 60000);
-    const timeLeft = auctionEndTime - nowGMT;
+    const timeLeft = auctionEndTime - now;
 
     if (timeLeft < 0) {
         clearInterval(countdownInterval);
@@ -258,10 +256,12 @@ function updateCountdown() {
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
+    // Update the countdown display
     document.getElementById("time-left").textContent = 
         `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
+// Update the countdown every second
 const countdownInterval = setInterval(updateCountdown, 1000);
 updateCountdown();
 
