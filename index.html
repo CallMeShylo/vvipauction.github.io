@@ -237,6 +237,8 @@
         }
         
 const auctionEndTime = new Date("Dec 28, 2024 00:11:11 GMT").getTime();
+const auctionStartTime = new Date("Dec 24, 2024 14:30:00").getTime();
+const totalAuctionDuration = auctionEndTime - auctionStartTime;
 
 function updateCountdown() {
     const now = new Date().getTime();
